@@ -1,4 +1,4 @@
-# Portfolio_codebook
+# Portfolio_presentation slide deck
 
 ## About this assignment
 This assignment was intended to test my ability to create a slide deck using R Markdown.   
