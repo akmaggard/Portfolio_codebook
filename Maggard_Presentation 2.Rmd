@@ -1,0 +1,83 @@
+---
+title: "Urban Disorder and the Seasons"
+subtitle: "A Case Study of Five Countries"
+author: "Allen Maggard"
+institute: "SIS-750"
+date: "2023/04/05 (updated: `r Sys.Date()`)"
+output:
+  xaringan::moon_reader:
+    css: ["metropolis"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    
+---
+```{r setup, include=FALSE}
+library(tidyverse)
+library(scales)
+library(haven)
+library(dplyr)
+library(patchwork)
+library(lubridate)
+library(knitr)
+
+knitr::opts_chunk$set(
+  echo = FALSE, cache = FALSE, prompt = FALSE,
+  tidy = FALSE, comment = NA,
+  message = FALSE, warning = FALSE,fig.width=11, fig.asp=0.590, fig.align='center', out.width='100%'
+)
+
+indevents2<-read_csv("indevents2.csv")
+```
+
+# About the Data
+## Basics
+- Urban Social Disorder v.3 (Peace Research Institute Oslo): 13,640 observations of urban unrest around the world between 1960 and 2014
+
+- Focus on two variables: NPART (# of persons responsible for disorder) and NDEATH (# of persons who died as result of disorder)
+
+- Research question: is urban disorder more likely to arise during certain months than during others?
+
+- Seek to understand month-level patterns of unrest in the aggregate, rather than discrete year-over-year trends,
+
+## Particulars
+
+- Data filtered to include instances of unrest for Bangladesh, India, Myanmar, Pakistan, and Sri Lanka
+
+- Data further refined to exclude N/As and ambiguously coded values
+
+- These refinements yielded 190 observations of instances of unrest in various urban localities spanning 1960 and 2014
+
+---
+
+# Analysis 1: Number of Participants
+- A note regarding NPART (# of persons responsible for disorder) coding: 1 = less than 10; 2 = 10-100; 3 = 101-1,000; 4 = 1,001-10,000; 5 = 10,001-100,000; 6 = 100,001-1,000,000; 7 = > 1,000,000
+``` {r, include = FALSE}
+indevents_alpha<-indevents2 %>% ggplot(aes(x = as.integer(BMONTH), y = NPART)) +
+  geom_jitter(aes(color = COUNTRY)) + 
+  geom_smooth(aes(color = COUNTRY,group= COUNTRY), se = FALSE) +
+  scale_x_continuous(n.breaks = 12) +
+  scale_y_continuous(n.breaks = 7) +
+  labs(x = "Month in which disorder event took place", y = "Number of persons involved in disorder", color = "Location of disorder event")
+```
+
+``` {r, echo = FALSE}
+plot(indevents_alpha)
+```
+
+---
+# Analysis 2: Number of Deaths
+``` {r, echo = FALSE}
+indevents_beta <- indevents2 %>% ggplot(aes(x = as.integer(BMONTH), y = as.integer(NDEATH))) +
+  geom_jitter(aes(color = COUNTRY)) + 
+  geom_smooth(aes(color = COUNTRY,group= COUNTRY), se = FALSE) +
+  scale_x_continuous(n.breaks = 12) +
+  scale_y_continuous(n.breaks = 7) +
+  labs(x = "Month in which disorder event took place", y = "Number of deaths during disorder event", color = "Location of disorder event")
+
+
+indevents_beta
+```
+
